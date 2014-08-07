@@ -119,7 +119,7 @@ def check_md5sum():
         return False
     p = subprocess.Popen(['md5sum', '-c', os.path.join(cachedir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     p.wait()
-    print p.stdout
+    print p.stdout.read()
     return p.returncode
     
 
@@ -138,11 +138,23 @@ print patterns_toskip
 for pattern in patterns_toskip:
     re_toskip.append(re.compile(pattern))
 
+cache_dir = buildcache_cachedir()
+
+if os.path.exists(cache_dir) and (check_md5sum() == 0):
+    output_dir = buildcache_outputdir()
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    print 'using cached result'
+    subprocess.check_output(['rsync', '--quiet', '-a', '--delete'] + glob.glob(os.path.join(cache_dir, '*')) + [output_dir])
+    sys.exit(0)
+
 returncode = subprocess.call(args)
 
 if returncode == 0:
     try:
         scanStraceFiles(tmpdir)
+        cache_dir = buildcache_cachedir()
+        output_dir = os.path.abspath(buildcache_outputdir())
         print 'footprint: ============================================================'
         for f in uniqFiles(filesRead):
             print f, filesRead[f]
@@ -154,15 +166,15 @@ if returncode == 0:
         for uf in uniqFiles(filesRead):
             if uf in filesWritten:
                 continue
+            if os.path.abspath(uf).startswith(output_dir):
+                continue
             if not os.path.isfile(uf):
-                'vivado opens directories'
+                #vivado opens directories
                 continue
             footprint.append(uf)
         md5sum = subprocess.check_output(['md5sum'] + footprint)
         print md5sum
         update_md5sum(md5sum)
-        cache_dir = buildcache_cachedir()
-        output_dir = buildcache_outputdir()
         subprocess.check_output(['rsync', '--quiet', '-a', '--delete'] + glob.glob(os.path.join(output_dir, '*')) + [cache_dir])
         print 'check_md5sum', check_md5sum()
 
