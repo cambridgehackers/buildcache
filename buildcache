@@ -1,0 +1,175 @@
+#!/usr/bin/python
+
+import glob
+import os
+import re
+import shutil
+import subprocess
+import sys
+import traceback
+
+readonly_re = re.compile('.*O_RDONLY.*')
+open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
+write_re = re.compile('write.(\d+).*')
+
+patterns_toskip = [
+    '/dev/.*',
+    '/etc/.*',
+    '/lib/.*',
+    '/proc/.*',
+    '/run/.*',
+    '/sys/.*',
+    '/tmp/.*',
+    '/usr/.*',
+    '.*/\\..*',
+    ]
+
+re_toskip = []
+
+filesRead = {}
+filesWritten = {}
+fdFile = {}
+fdFlags = {}
+
+def scanStraceFiles(tmpdir):
+    for stracefile in glob.glob('%s/*' % tmpdir):
+        for line in open(stracefile, 'r'):
+            m = open_re.match(line)
+            wm = write_re.match(line)
+            if m:
+                fname = os.path.abspath(m.group(1))
+                flags =  m.group(2)
+
+                fd = m.group(m.lastindex)
+                fdFile[fd] = fname
+                fdFlags[fd] = flags
+                #print fd, fname, flags
+
+                if readonly_re.match(flags):
+                    if fname in filesRead:
+                        filesRead[fname] += '|' + flags
+                    else:
+                        filesRead[fname] = flags
+                else:
+                    # might be a write, but we need further evidence
+                    pass
+            elif wm:
+                fd = wm.group(1)
+                if int(fd) <= 2:
+                    continue
+                if not (fd in fdFile):
+                    print 'unknown file for fd', fd
+                    print line
+                    continue
+                fname = fdFile[fd]
+                flags = fdFlags[fd]
+                #print fd, fname, flags
+                if not fname in filesWritten:
+                    filesWritten[fname] = flags
+            else:
+                print 'no matching re: ', line[0:-1]
+                pass
+
+def uniqFiles(files):
+    uniqfiles = []
+    for f in files:
+        skip = False
+        for re in re_toskip:
+            m = re.match(f)
+            if m:
+                skip = True
+                break
+        if skip:
+            continue
+        uniqfiles.append(f)
+    uniqfiles.sort()
+    return uniqfiles    
+
+def buildcache_cachedir():
+    if not 'BUILDCACHE_CACHEDIR' in os.environ:
+        print 'no BUILDCACHE_CACHEDIR'
+        print os.environ
+        return None
+    cachedir = os.environ['BUILDCACHE_CACHEDIR']
+    return cachedir
+def buildcache_outputdir():
+    if not 'BUILDCACHE_OUTPUTDIR' in os.environ:
+        print 'no BUILDCACHE_OUTPUTDIR'
+        print os.environ
+        return None
+    outputdir = os.environ['BUILDCACHE_OUTPUTDIR']
+    return outputdir
+
+def update_md5sum(md5sum):
+    cachedir = buildcache_cachedir()
+    if not cachedir:
+        return
+    if not os.path.exists(cachedir):
+        os.makedirs(cachedir)
+    print 'buildcache_cachedir', cachedir
+    f = open(os.path.join(cachedir, 'buildcache.md5sum'), 'w')
+    f.write(md5sum)
+    f.close()
+
+def check_md5sum():
+    cachedir = buildcache_cachedir()
+    if not cachedir:
+        return False
+    if not os.path.exists(cachedir):
+        return False
+    p = subprocess.Popen(['md5sum', '-c', os.path.join(cachedir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
+    p.wait()
+    print p.stdout
+    return p.returncode
+    
+
+tmpdir = '/tmp/buildcache-%d' % os.getpid()
+os.makedirs(tmpdir)
+
+args = ['strace', '-e', 'open,write', '-ff', '-o', '%s/strace' % tmpdir] + sys.argv[1:]
+
+processpath = subprocess.check_output(['which', sys.argv[1]])
+processpath = os.path.dirname(processpath)
+if processpath.endswith('/bin'):
+    processpath = os.path.dirname(processpath)
+patterns_toskip.append(os.path.join(processpath, '.*'))
+print patterns_toskip
+
+for pattern in patterns_toskip:
+    re_toskip.append(re.compile(pattern))
+
+returncode = subprocess.call(args)
+
+if returncode == 0:
+    try:
+        scanStraceFiles(tmpdir)
+        print 'footprint: ============================================================'
+        for f in uniqFiles(filesRead):
+            print f, filesRead[f]
+        print 'output:    ============================================================'
+        for f in uniqFiles(filesWritten):
+            print f, filesWritten[f]
+        print '======================================================================='
+        footprint = []
+        for uf in uniqFiles(filesRead):
+            if uf in filesWritten:
+                continue
+            if not os.path.isfile(uf):
+                'vivado opens directories'
+                continue
+            footprint.append(uf)
+        md5sum = subprocess.check_output(['md5sum'] + footprint)
+        print md5sum
+        update_md5sum(md5sum)
+        cache_dir = buildcache_cachedir()
+        output_dir = buildcache_outputdir()
+        subprocess.check_output(['rsync', '--quiet', '-a', '--delete'] + glob.glob(os.path.join(output_dir, '*')) + [cache_dir])
+        print 'check_md5sum', check_md5sum()
+
+    except:
+        print "Unexpected error:", sys.exc_info()
+        print traceback.format_exc()
+
+    shutil.rmtree(tmpdir)
+
+sys.exit(returncode)
