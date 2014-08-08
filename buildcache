@@ -79,8 +79,8 @@ def scanStraceFiles(tmpdir):
                 if int(fd) <= 2:
                     continue
                 if not (fd in fdFile):
-                    print 'unknown file for fd', fd
-                    print line
+                    #print 'unknown file for fd', fd
+                    #print line
                     continue
                 fname = fdFile[fd]
                 flags = fdFlags[fd]
@@ -88,7 +88,7 @@ def scanStraceFiles(tmpdir):
                 if not fname in filesWritten:
                     filesWritten[fname] = flags
             else:
-                print 'no matching re: ', line[0:-1]
+                #print 'no matching re: ', line[0:-1]
                 pass
 
 def writeContextFile(filename):
@@ -123,14 +123,14 @@ def uniqFiles(files):
 def buildcache_cachedir():
     if not 'BUILDCACHE_CACHEDIR' in os.environ:
         print 'no BUILDCACHE_CACHEDIR'
-        print os.environ
+        #print os.environ
         return None
     cachedir = os.environ['BUILDCACHE_CACHEDIR']
     return cachedir
 def buildcache_outputdir():
     if not 'BUILDCACHE_OUTPUTDIR' in os.environ:
         print 'no BUILDCACHE_OUTPUTDIR'
-        print os.environ
+        #print os.environ
         return None
     outputdir = os.environ['BUILDCACHE_OUTPUTDIR']
     return outputdir
@@ -141,7 +141,6 @@ def update_md5sum(md5sum):
         return
     if not os.path.exists(cachedir):
         os.makedirs(cachedir)
-    print 'buildcache_cachedir', cachedir
     f = open(os.path.join(cachedir, 'buildcache.md5sum'), 'w+')
     rc = f.write(md5sum)
     f.close()
@@ -152,9 +151,9 @@ def check_md5sum():
         return False
     if not os.path.exists(cachedir):
         return False
-    p = subprocess.Popen(['md5sum', '-c', os.path.join(cachedir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['md5sum', '-c', '--quiet', os.path.join(cachedir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     p.wait()
-    print p.stdout.read()
+    #print p.stdout.read()
     return p.returncode
     
 
@@ -168,7 +167,7 @@ processpath = os.path.dirname(processpath)
 if processpath.endswith('/bin'):
     processpath = os.path.dirname(processpath)
 patterns_to_skip.append(os.path.join(processpath, '.*'))
-print patterns_to_skip
+#print patterns_to_skip
 
 re_to_skip = [re.compile(pattern) for pattern in patterns_to_skip]
 
