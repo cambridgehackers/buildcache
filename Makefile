@@ -1,6 +1,6 @@
 BUILDCACHE=$(shell /bin/pwd)/buildcache
 
-tests: test1 test2
+tests: test1 test2 test3
 
 test1:
 	rm -fr cache data output.bak
@@ -27,4 +27,17 @@ test2:
 	mv output output.bak; \
 	BUILDCACHE_CACHEDIR=./cache/test2 \
 	$(BUILDCACHE) sort ../data/motd -o output/dmot; \
+	diff -urN output.bak output
+
+## make sure it works even if a file is written and removed
+test3:
+	rm -fr test3dir data
+	mkdir -p test3dir/output data
+	cp -f /etc/motd data
+	cd test3dir; \
+	BUILDCACHE_CACHEDIR=./cache/test3 \
+	$(BUILDCACHE) ../test3.sh ../data/motd output/dmot; \
+	mv output output.bak; \
+	BUILDCACHE_CACHEDIR=./cache/test3 \
+	$(BUILDCACHE) ../test3.sh ../data/motd output/dmot; \
 	diff -urN output.bak output

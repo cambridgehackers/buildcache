@@ -138,6 +138,10 @@ def readFilesWrittenFile(cache_dir):
 def writeFilesToCache(cache_dir, filesWritten):
     cwd = '/'
     for f in filesWritten:
+        if not os.path.exists(f):
+            if verbose:
+                print 'skipping non-existent file', f
+            continue
         relname = os.path.relpath(f, cwd)
         cname = os.path.join(cache_dir, relname)
         if verbose:
@@ -155,6 +159,9 @@ def readFilesFromCache(cache_dir):
     for f in filesWritten:
         relname = os.path.relpath(f, cwd)
         cname = os.path.join(cache_dir, relname)
+        if not os.path.exists(cname):
+            print 'cached file does not exist', cname
+            continue
         if verbose:
             print 'restoring', f
         fdir = os.path.dirname(f)
@@ -264,7 +271,7 @@ if returncode == 0:
         if verbose:
             print md5sum
         update_md5sum(md5sum)
-        filtered_files_written = [context_file_name] + [f for f in filesWritten if not len([p for p in re_to_skip if p.match(f)])]
+        filtered_files_written = [context_file_name] + [f for f in filesWritten if os.path.exists(f) and (not len([p for p in re_to_skip if p.match(f)]))]
         updateFilesWrittenFile(cache_dir, filtered_files_written)
         writeFilesToCache(cache_dir, filtered_files_written)
         check_md5sum()
