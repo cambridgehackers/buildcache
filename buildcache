@@ -7,12 +7,14 @@ import shutil
 import subprocess
 import sys
 import traceback
+import json
+import functools
 
 readonly_re = re.compile('.*O_RDONLY.*')
 open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
 write_re = re.compile('write.(\d+).*')
 
-patterns_toskip = [
+patterns_to_skip = [
     '/dev/.*',
     '/etc/.*',
     '/lib/.*',
@@ -24,7 +26,26 @@ patterns_toskip = [
     '.*/\\..*',
     ]
 
-re_toskip = []
+environment_variables_to_skip = [
+    '.*EMACS.*',
+    '.*SESSION_COOKIE.*',
+    'DISPLAY',
+    'LM_LICENSE_FILE',
+    'LOGNAME',
+    'MAIL',
+    'MAKELEVEL',
+    'MFLAGS',
+    'MAKEFLAGS',
+    'SHLVL',
+    'TERM',
+    'TERMCAP',
+    'SSH.*',
+    'USER',
+]
+
+environment_re_to_skip = [re.compile(p) for p in environment_variables_to_skip]
+
+re_to_skip = []
 
 filesRead = {}
 filesWritten = {}
@@ -70,11 +91,25 @@ def scanStraceFiles(tmpdir):
                 print 'no matching re: ', line[0:-1]
                 pass
 
+def writeContextFile(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    env = {}
+    for k in os.environ:
+        if len([p for p in environment_re_to_skip if p.match(k)]):
+            continue
+        env[k] = os.environ[k]
+    context = {'argv': sys.argv,
+               'env': env }
+    f = open(filename, 'w+')
+    f.write(json.dumps(context))
+    f.close()
+
 def uniqFiles(files):
     uniqfiles = []
     for f in files:
         skip = False
-        for re in re_toskip:
+        for re in re_to_skip:
             m = re.match(f)
             if m:
                 skip = True
@@ -107,8 +142,8 @@ def update_md5sum(md5sum):
     if not os.path.exists(cachedir):
         os.makedirs(cachedir)
     print 'buildcache_cachedir', cachedir
-    f = open(os.path.join(cachedir, 'buildcache.md5sum'), 'w')
-    f.write(md5sum)
+    f = open(os.path.join(cachedir, 'buildcache.md5sum'), 'w+')
+    rc = f.write(md5sum)
     f.close()
 
 def check_md5sum():
@@ -132,16 +167,18 @@ processpath = subprocess.check_output(['which', sys.argv[1]])
 processpath = os.path.dirname(processpath)
 if processpath.endswith('/bin'):
     processpath = os.path.dirname(processpath)
-patterns_toskip.append(os.path.join(processpath, '.*'))
-print patterns_toskip
+patterns_to_skip.append(os.path.join(processpath, '.*'))
+print patterns_to_skip
 
-for pattern in patterns_toskip:
-    re_toskip.append(re.compile(pattern))
+re_to_skip = [re.compile(pattern) for pattern in patterns_to_skip]
 
 cache_dir = buildcache_cachedir()
+output_dir = buildcache_outputdir()
+context_file_name = os.path.join(output_dir, 'buildcache.context.txt')
+
+writeContextFile(context_file_name)
 
 if os.path.exists(cache_dir) and (check_md5sum() == 0):
-    output_dir = buildcache_outputdir()
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     print 'using cached result'
@@ -162,14 +199,14 @@ if returncode == 0:
         for f in uniqFiles(filesWritten):
             print f, filesWritten[f]
         print '======================================================================='
-        footprint = []
+        footprint = [context_file_name]
         for uf in uniqFiles(filesRead):
             if uf in filesWritten:
                 continue
             if os.path.abspath(uf).startswith(output_dir):
                 continue
             if not os.path.isfile(uf):
-                #vivado opens directories
+                #vivado seems to open directories
                 continue
             footprint.append(uf)
         md5sum = subprocess.check_output(['md5sum'] + footprint)
