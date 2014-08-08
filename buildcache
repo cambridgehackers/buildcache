@@ -262,7 +262,7 @@ if returncode == 0:
         if verbose:
             print md5sum
         update_md5sum(md5sum)
-        filtered_files_written = [f for f in filesWritten if not len([p for p in re_to_skip if p.match(f)])]
+        filtered_files_written = [context_file_name] + [f for f in filesWritten if not len([p for p in re_to_skip if p.match(f)])]
         updateFilesWrittenFile(cache_dir, filtered_files_written)
         writeFilesToCache(cache_dir, filtered_files_written)
         check_md5sum()
