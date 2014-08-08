@@ -252,10 +252,10 @@ if returncode == 0:
         if verbose:
             print 'footprint: ============================================================'
             for f in uniqFiles(filesRead):
-                print f, filesRead[f]
+                print f
             print 'output:    ============================================================'
             for f in uniqFiles(filesWritten):
-                print f, filesWritten[f]
+                print f
             print '======================================================================='
         footprint = [context_file_name]
         for uf in uniqFiles(filesRead):
