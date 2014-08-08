@@ -34,6 +34,8 @@ environment_variables_to_skip = [
     '.*EMACS.*',
     '.*SESSION_COOKIE.*',
     'BUILDCACHE.*',
+    'COLUMNS',
+    'OLDPWD',
     'DISPLAY',
     'LM_LICENSE_FILE',
     'LOGNAME',
