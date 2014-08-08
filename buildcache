@@ -149,6 +149,9 @@ def readFilesFromCache(cacheDir):
         cname = os.path.join(cacheDir, fname)
         if verbose:
             print 'restoring', fname
+        fdir = os.path.dirname(fname)
+        if not os.path.isdir(fdir):
+            os.makedirs(fdir)
         shutil.copy2(cname, fname)
 
 def uniqFiles(files):
