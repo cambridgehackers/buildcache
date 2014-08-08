@@ -14,10 +14,11 @@ test1:
 	BUILDCACHE_OUTPUTDIR=./output \
 	$(BUILDCACHE) sort data/motd -o output/dmot
 	diff -urN output.bak output
+	find cache
 
 ## verify that BUILDCACHE_OUTPUTDIR is not needed
 test2:
-	rm -fr cache test2dir data
+	rm -fr test2dir data
 	mkdir -p test2dir/output data
 	cp -f /etc/motd data
 	cd test2dir; \

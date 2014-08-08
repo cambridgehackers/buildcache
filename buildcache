@@ -8,6 +8,7 @@ import subprocess
 import sys
 import traceback
 import json
+import hashlib
 
 verbose = False
 if 'BUILDCACHE_VERBOSE' in os.environ and os.environ['BUILDCACHE_VERBOSE'] == '1':
@@ -105,11 +106,14 @@ def writeContextFile(filename):
     context = {'argv': sys.argv,
                'env': env }
     f = open(filename, 'w+')
-    f.write(json.dumps(context))
+    jsonstr = json.dumps(context)
+    f.write(jsonstr)
     f.close()
+    m = hashlib.sha1(jsonstr)
+    return m.hexdigest()
 
-def updateFilesWrittenFile(cacheDir, filesWritten):
-    filename = os.path.join(cacheDir, 'buildcache.fileswritten.json')
+def updateFilesWrittenFile(cache_dir, filesWritten):
+    filename = os.path.join(cache_dir, 'buildcache.fileswritten.json')
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     cwd = os.getcwd()
@@ -119,8 +123,8 @@ def updateFilesWrittenFile(cacheDir, filesWritten):
     f.write(json.dumps(info))
     f.close()
 
-def readFilesWrittenFile(cacheDir):
-    filename = os.path.join(cacheDir, 'buildcache.fileswritten.json')
+def readFilesWrittenFile(cache_dir):
+    filename = os.path.join(cache_dir, 'buildcache.fileswritten.json')
     if not os.path.exists(os.path.dirname(filename)):
         return []
     f = open(filename, 'r')
@@ -128,11 +132,11 @@ def readFilesWrittenFile(cacheDir):
     f.close()
     return info
 
-def writeFilesToCache(cacheDir, filesWritten):
+def writeFilesToCache(cache_dir, filesWritten):
     cwd = os.getcwd()
     for f in filesWritten:
         fname = os.path.relpath(f, cwd)
-        cname = os.path.join(cacheDir, fname)
+        cname = os.path.join(cache_dir, fname)
         if verbose:
             print 'caching', fname
         cdir = os.path.dirname(cname)
@@ -140,13 +144,13 @@ def writeFilesToCache(cacheDir, filesWritten):
             os.makedirs(cdir)
         shutil.copy2(fname, cname)
 
-def readFilesFromCache(cacheDir):
-    info = readFilesWrittenFile(cacheDir)
+def readFilesFromCache(cache_dir):
+    info = readFilesWrittenFile(cache_dir)
     filesWritten = info['filesWritten']
     cwd = info['cwd']
     for f in filesWritten:
         fname = os.path.relpath(f, cwd)
-        cname = os.path.join(cacheDir, fname)
+        cname = os.path.join(cache_dir, fname)
         if verbose:
             print 'restoring', fname
         fdir = os.path.dirname(fname)
@@ -169,12 +173,12 @@ def uniqFiles(files):
     uniqfiles.sort()
     return uniqfiles    
 
-def buildcache_cachedir():
+def buildcache_cachedir(key):
     if not 'BUILDCACHE_CACHEDIR' in os.environ:
         print 'no BUILDCACHE_CACHEDIR'
         #print os.environ
         return None
-    cachedir = os.environ['BUILDCACHE_CACHEDIR']
+    cachedir = os.path.join(os.environ['BUILDCACHE_CACHEDIR'], key)
     return cachedir
 def buildcache_outputdir():
     if not 'BUILDCACHE_OUTPUTDIR' in os.environ:
@@ -183,22 +187,20 @@ def buildcache_outputdir():
     return outputdir
 
 def update_md5sum(md5sum):
-    cachedir = buildcache_cachedir()
-    if not cachedir:
+    if not cache_dir:
         return
-    if not os.path.exists(cachedir):
-        os.makedirs(cachedir)
-    f = open(os.path.join(cachedir, 'buildcache.md5sum'), 'w+')
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+    f = open(os.path.join(cache_dir, 'buildcache.md5sum'), 'w+')
     rc = f.write(md5sum)
     f.close()
 
 def check_md5sum():
-    cachedir = buildcache_cachedir()
-    if not cachedir:
+    if not cache_dir:
         return False
-    if not os.path.exists(cachedir):
+    if not os.path.exists(cache_dir):
         return False
-    p = subprocess.Popen(['md5sum', '-c', os.path.join(cachedir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['md5sum', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     p.wait()
     if verbose:
         print p.stdout.read()
@@ -219,15 +221,13 @@ patterns_to_skip.append(os.path.join(processpath, '.*'))
 
 re_to_skip = [re.compile(pattern) for pattern in patterns_to_skip]
 
-cache_dir = buildcache_cachedir()
 output_dir = buildcache_outputdir()
 context_file_name = os.path.join(output_dir, 'buildcache.context.json')
 
-writeContextFile(context_file_name)
+sha1 = writeContextFile(context_file_name)
+cache_dir = buildcache_cachedir(sha1)
 
 if os.path.exists(cache_dir) and (check_md5sum() == 0):
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
     print '%s: using cached result' % sys.argv[0]
     readFilesFromCache(cache_dir)
     sys.exit(0)
@@ -237,7 +237,6 @@ returncode = subprocess.call(args)
 if returncode == 0:
     try:
         scanStraceFiles(tmpdir)
-        cache_dir = buildcache_cachedir()
         output_dir = os.path.abspath(buildcache_outputdir())
         if verbose:
             print 'footprint: ============================================================'
