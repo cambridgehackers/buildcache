@@ -116,7 +116,7 @@ def updateFilesWrittenFile(cache_dir, filesWritten):
     filename = os.path.join(cache_dir, 'buildcache.fileswritten.json')
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
-    cwd = os.getcwd()
+    cwd = '/' #os.getcwd()
     info = {'filesWritten': [f for f in filesWritten],
             'cwd': cwd}
     f = open(filename, 'w+')
@@ -133,30 +133,31 @@ def readFilesWrittenFile(cache_dir):
     return info
 
 def writeFilesToCache(cache_dir, filesWritten):
-    cwd = os.getcwd()
+    cwd = '/'
     for f in filesWritten:
-        fname = os.path.relpath(f, cwd)
-        cname = os.path.join(cache_dir, fname)
+        relname = os.path.relpath(f, cwd)
+        cname = os.path.join(cache_dir, relname)
         if verbose:
-            print 'caching', fname
+            print 'caching', f
+            print '     to', cname 
         cdir = os.path.dirname(cname)
         if not os.path.isdir(cdir):
             os.makedirs(cdir)
-        shutil.copy2(fname, cname)
+        shutil.copy2(f, cname)
 
 def readFilesFromCache(cache_dir):
     info = readFilesWrittenFile(cache_dir)
     filesWritten = info['filesWritten']
     cwd = info['cwd']
     for f in filesWritten:
-        fname = os.path.relpath(f, cwd)
-        cname = os.path.join(cache_dir, fname)
+        relname = os.path.relpath(f, cwd)
+        cname = os.path.join(cache_dir, relname)
         if verbose:
-            print 'restoring', fname
+            print 'restoring', f
         fdir = os.path.dirname(f)
         if not os.path.isdir(fdir):
             os.makedirs(fdir)
-        shutil.copy2(cname, fname)
+        shutil.copy2(cname, f)
 
 def uniqFiles(files):
     uniqfiles = []
