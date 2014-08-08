@@ -175,9 +175,7 @@ def buildcache_cachedir():
     return cachedir
 def buildcache_outputdir():
     if not 'BUILDCACHE_OUTPUTDIR' in os.environ:
-        print 'no BUILDCACHE_OUTPUTDIR'
-        #print os.environ
-        return None
+        return os.getcwd()
     outputdir = os.environ['BUILDCACHE_OUTPUTDIR']
     return outputdir
 
