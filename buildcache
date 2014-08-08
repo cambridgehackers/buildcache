@@ -33,6 +33,7 @@ patterns_to_skip = [
 environment_variables_to_skip = [
     '.*EMACS.*',
     '.*SESSION_COOKIE.*',
+    'BUILDCACHE.*',
     'DISPLAY',
     'LM_LICENSE_FILE',
     'LOGNAME',
