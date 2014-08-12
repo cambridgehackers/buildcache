@@ -221,8 +221,6 @@ def check_md5sum():
 tmpdir = '/tmp/buildcache-%d' % os.getpid()
 os.makedirs(tmpdir)
 
-args = ['strace', '-e', 'open,write', '-ff', '-o', '%s/strace' % tmpdir] + sys.argv[1:]
-
 processpath = subprocess.check_output(['which', sys.argv[1]])
 processpath = os.path.dirname(processpath)
 if processpath.endswith('/bin'):
@@ -238,14 +236,18 @@ context_file_name = os.path.join(output_dir, 'buildcache.context.json')
 sha1 = writeContextFile(context_file_name)
 cache_dir = buildcache_cachedir(sha1)
 
-if os.path.exists(cache_dir) and (check_md5sum() == 0):
+if cache_dir and os.path.exists(cache_dir) and (check_md5sum() == 0):
     print '%s: using cached result' % sys.argv[0]
     readFilesFromCache(cache_dir)
     sys.exit(0)
 
+if cache_dir:
+    args = ['strace', '-e', 'open,write', '-ff', '-o', '%s/strace' % tmpdir] + sys.argv[1:]
+else:
+    args = sys.argv[1:]
 returncode = subprocess.call(args)
 
-if returncode == 0:
+if returncode == 0 and cache_dir:
     try:
         scanStraceFiles(tmpdir)
         output_dir = os.path.abspath(buildcache_outputdir())
