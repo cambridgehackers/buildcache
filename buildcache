@@ -168,8 +168,13 @@ def readFilesFromCache(cache_dir):
         fdir = os.path.dirname(f)
         if not os.path.isdir(fdir):
             os.makedirs(fdir)
-        shutil.copy2(cname, f)
-
+        try:
+            shutil.copy2(cname, f)
+        except:
+            print 'Exception:', sys.exc_info()
+            print 'Restoring cname %s to %s' % (cname, f)
+            print traceback.format_exc()
+        
 def uniqFiles(files):
     uniqfiles = []
     for f in files:
