@@ -217,7 +217,7 @@ def check_md5sum():
         return False
     if not os.path.exists(cache_dir):
         return False
-    p = subprocess.Popen(['md5sum', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['md5sum', '--quiet', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     p.wait()
     if verbose:
         print p.stdout.read()
