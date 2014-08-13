@@ -219,6 +219,8 @@ def check_md5sum():
     
 
 tmpdir = '/tmp/buildcache-%d' % os.getpid()
+if os.path.isdir(tmpdir):
+    shutil.rmtree(tmpdir)
 os.makedirs(tmpdir)
 
 processpath = subprocess.check_output(['which', sys.argv[1]])
