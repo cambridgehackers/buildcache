@@ -48,6 +48,7 @@ environment_variables_to_skip = [
     'TERMCAP',
     'SSH.*',
     'USER',
+    'WINDOW'
 ]
 
 environment_re_to_skip = [re.compile(p) for p in environment_variables_to_skip]
