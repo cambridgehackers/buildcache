@@ -227,7 +227,8 @@ def check_md5sum():
         print result
     elif verbose:
         for line in result:
-            print line if not line.endsWith(' OK')
+            if not line.endsWith(' OK'):
+                print line 
     return p.returncode
     
 
