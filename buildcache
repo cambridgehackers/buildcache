@@ -13,6 +13,9 @@ import hashlib
 verbose = False
 if 'BUILDCACHE_VERBOSE' in os.environ and os.environ['BUILDCACHE_VERBOSE'] == '1':
     verbose = True
+debug = False
+if 'BUILDCACHE_DEBUG' in os.environ and os.environ['BUILDCACHE_DEBUG'] == '1':
+    debug = True
 
 readonly_re = re.compile('.*O_RDONLY.*')
 open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
@@ -140,7 +143,7 @@ def writeFilesToCache(cache_dir, filesWritten):
     cwd = '/'
     for f in filesWritten:
         if not os.path.exists(f):
-            if verbose:
+            if debug:
                 print 'skipping non-existent file', f
             continue
         relname = os.path.relpath(f, cwd)
@@ -217,10 +220,14 @@ def check_md5sum():
         return False
     if not os.path.exists(cache_dir):
         return False
-    p = subprocess.Popen(['md5sum', '--quiet', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['md5sum', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     p.wait()
-    if verbose:
-        print p.stdout.read()
+    result = p.stdout.read()
+    if debug:
+        print result
+    else if verbose:
+        for line in result:
+            print line if not line.endsWith(' OK')
     return p.returncode
     
 
@@ -259,14 +266,15 @@ if returncode == 0 and cache_dir:
     try:
         scanStraceFiles(tmpdir)
         output_dir = os.path.abspath(buildcache_outputdir())
-        if verbose:
-            print 'footprint: ============================================================'
+        if debug:
+            print 'footprint: ================================================================'
             for f in uniqFiles(filesRead):
                 print f
-            print 'output:    ============================================================'
+        if verbose:
+            print 'files to cache: ==========================================================='
             for f in uniqFiles(filesWritten):
                 print f
-            print '======================================================================='
+            print '==========================================================================='
         footprint = [context_file_name]
         for uf in uniqFiles(filesRead):
             if uf in filesWritten:
@@ -278,7 +286,7 @@ if returncode == 0 and cache_dir:
                 continue
             footprint.append(uf)
         md5sum = subprocess.check_output(['md5sum'] + footprint)
-        if verbose:
+        if debug:
             print md5sum
         update_md5sum(md5sum)
         filtered_files_written = [context_file_name] + [f for f in filesWritten if os.path.exists(f) and (not len([p for p in re_to_skip if p.match(f)]))]
