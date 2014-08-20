@@ -30,6 +30,7 @@ patterns_to_skip = [
     '/sys/.*',
     '/tmp/.*',
     '/usr/.*',
+    '/var/.*',
     '.*/\\..*',
     ]
 
