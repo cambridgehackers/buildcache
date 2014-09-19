@@ -63,6 +63,11 @@ filesWritten = {}
 fdFile = {}
 fdFlags = {}
 
+## python 2.6 does not have subprocess.check_output
+def check_output(cmd):
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    return p.stdout.read()
+
 def scanStraceFiles(tmpdir):
     for stracefile in glob.glob('%s/*' % tmpdir):
         for line in open(stracefile, 'r'):
@@ -237,7 +242,7 @@ if os.path.isdir(tmpdir):
     shutil.rmtree(tmpdir)
 os.makedirs(tmpdir)
 
-processpath = subprocess.check_output(['which', sys.argv[1]])
+processpath = check_output(['which', sys.argv[1]])
 processpath = os.path.dirname(processpath)
 if processpath.endswith('/bin'):
     processpath = os.path.dirname(processpath)
@@ -286,7 +291,7 @@ if returncode == 0 and cache_dir:
                 #vivado seems to open directories
                 continue
             footprint.append(uf)
-        md5sum = subprocess.check_output(['md5sum'] + footprint)
+        md5sum = check_output(['md5sum'] + footprint)
         if debug:
             print md5sum
         update_md5sum(md5sum)
