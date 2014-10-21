@@ -1,3 +1,9 @@
+buildcache (14.10.2-1precise1) precise; urgency=low
+
+  * bump version
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 16:18:49 -0400
+
 buildcache (14.10.1-5precise1) precise; urgency=low
 
   * Depends on strace both at build/test and at run time.
