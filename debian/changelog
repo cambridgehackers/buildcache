@@ -1,0 +1,29 @@
+buildcache (14.10.1-5precise1) precise; urgency=low
+
+  * Depends on strace both at build/test and at run time.
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:48:04 -0400
+
+buildcache (14.10.1-4precise1) precise; urgency=low
+
+  * Also needs coreutils at build time
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:11:42 -0400
+
+buildcache (14.10.1-3precise1) precise; urgency=low
+
+  * Needs python at build time
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:59:50 -0400
+
+buildcache (14.10.1-2precise1) precise; urgency=low
+
+  * use /etc/os-release instead of /etc/motd
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:51:53 -0400
+
+buildcache (14.10.1-1precise1) precise; urgency=low
+
+  * Initial release
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 13:02:58 -0400
