@@ -231,10 +231,11 @@ def check_md5sum():
     result = p.stdout.read()
     if debug:
         print result
-    elif verbose:
+    elif 1 or verbose:
         for line in result.split('\n'):
+            #print line
             if not line.endswith(' OK'):
-                print line 
+                print line.replace('FAILED', 'was changed')
     return p.returncode
     
 
