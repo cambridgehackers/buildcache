@@ -59,7 +59,7 @@ all:
 	true
 
 install:
-	install -d -m755 buildcache $(DESTDIR)/usr/share/buildcache
+	install -d -m755 $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
 dpkg:
