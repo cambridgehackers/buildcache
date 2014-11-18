@@ -1,3 +1,10 @@
+buildcache (14.11.1-1precise1) precise; urgency=low
+
+  * Updated to 14.11.1.
+  * Shows what files were changed that caused cache to be invalid
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 08:48:42 -0500
+
 buildcache (14.10.2-1precise1) precise; urgency=low
 
   * bump version
