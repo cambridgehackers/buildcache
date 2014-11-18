@@ -62,6 +62,11 @@ install:
 	install -d -m755 buildcache $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
+dpkg:
+	sed -i s/trusty/precise/g debian/changelog
+	git buildpackage --git-ignore-new --git-upstream-branch=master -us -uc
+	sed -i s/trusty/precise/g debian/changelog
+
 spkg:
 	sed -i s/trusty/precise/g debian/changelog
 	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc
