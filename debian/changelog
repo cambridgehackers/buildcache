@@ -1,3 +1,9 @@
+buildcache (14.11.1-2precise2) precise; urgency=low
+
+  * Fixed make install
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 12:18:12 -0500
+
 buildcache (14.11.1-1precise1) precise; urgency=low
 
   * Updated to 14.11.1.
