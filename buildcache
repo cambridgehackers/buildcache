@@ -16,6 +16,9 @@ if 'BUILDCACHE_VERBOSE' in os.environ and os.environ['BUILDCACHE_VERBOSE'] == '1
 debug = False
 if 'BUILDCACHE_DEBUG' in os.environ and os.environ['BUILDCACHE_DEBUG'] == '1':
     debug = True
+follow_fork = True
+if 'BUILDCACHE_FOLLOW_FORK' in os.environ and os.environ['BUILDCACHE_FOLLOW_FORK'] == '1':
+    follow_fork = True
 
 readonly_re = re.compile('.*O_RDONLY.*')
 open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
@@ -227,8 +230,7 @@ def check_md5sum():
     if not os.path.exists(cache_dir):
         return False
     p = subprocess.Popen(['md5sum', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
-    p.wait()
-    result = p.stdout.read()
+    result = p.communicate()[0]
     if debug:
         print result
     elif 1 or verbose:
@@ -264,8 +266,12 @@ if cache_dir and os.path.exists(cache_dir) and (check_md5sum() == 0):
     readFilesFromCache(cache_dir)
     sys.exit(0)
 
+strace = ['strace', '-e', 'open,write', '-o', '%s/strace' % tmpdir]
+if follow_fork:
+    strace.append('-ff')
+    print 'buildcache using -ff', strace + sys.argv[1:]
 if cache_dir:
-    args = ['strace', '-e', 'open,write', '-ff', '-o', '%s/strace' % tmpdir] + sys.argv[1:]
+    args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
 returncode = subprocess.call(args)
