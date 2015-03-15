@@ -274,7 +274,12 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-returncode = subprocess.call(args)
+print "DD:", args
+p = subprocess.Popen(args)
+result = p.communicate()[0]
+if debug:
+    print result
+returncode = p.returncode
 
 if returncode == 0 and cache_dir:
     try:
