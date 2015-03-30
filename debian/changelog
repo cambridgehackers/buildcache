@@ -1,47 +1,53 @@
-buildcache (14.11.1-2precise2) precise; urgency=low
+buildcache (15.03.1-1trusty1) trusty; urgency=medium
+
+  * 15.03.1
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 30 Mar 2015 13:55:15 -0400
+
+buildcache (14.11.1-2trusty2) trusty; urgency=low
 
   * Fixed make install
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 12:18:12 -0500
 
-buildcache (14.11.1-1precise1) precise; urgency=low
+buildcache (14.11.1-1trusty1) trusty; urgency=low
 
   * Updated to 14.11.1.
   * Shows what files were changed that caused cache to be invalid
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 08:48:42 -0500
 
-buildcache (14.10.2-1precise1) precise; urgency=low
+buildcache (14.10.2-1trusty1) trusty; urgency=low
 
   * bump version
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 16:18:49 -0400
 
-buildcache (14.10.1-5precise1) precise; urgency=low
+buildcache (14.10.1-5trusty1) trusty; urgency=low
 
   * Depends on strace both at build/test and at run time.
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:48:04 -0400
 
-buildcache (14.10.1-4precise1) precise; urgency=low
+buildcache (14.10.1-4trusty1) trusty; urgency=low
 
   * Also needs coreutils at build time
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:11:42 -0400
 
-buildcache (14.10.1-3precise1) precise; urgency=low
+buildcache (14.10.1-3trusty1) trusty; urgency=low
 
   * Needs python at build time
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:59:50 -0400
 
-buildcache (14.10.1-2precise1) precise; urgency=low
+buildcache (14.10.1-2trusty1) trusty; urgency=low
 
   * use /etc/os-release instead of /etc/motd
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:51:53 -0400
 
-buildcache (14.10.1-1precise1) precise; urgency=low
+buildcache (14.10.1-1trusty1) trusty; urgency=low
 
   * Initial release
 
