@@ -28,6 +28,7 @@ patterns_to_skip = [
     '/dev/.*',
     '/etc/.*',
     '/lib/.*',
+    '/lib64/.*',
     '/proc/.*',
     '/run/.*',
     '/sys/.*',
