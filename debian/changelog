@@ -1,3 +1,9 @@
+buildcache (15.04.1-1trusty1) trusty; urgency=medium
+
+  * 15.04.1
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 07 Apr 2015 08:02:24 -0400
+
 buildcache (15.03.1-1trusty1) trusty; urgency=medium
 
   * 15.03.1
