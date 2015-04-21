@@ -35,6 +35,7 @@ patterns_to_skip = [
     '/tmp/.*',
     '/usr/.*',
     '/var/.*',
+    '/afs/csail.mit.edu/.*',
     '.*/\\..*',
     ]
 
