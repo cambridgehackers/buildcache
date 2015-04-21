@@ -37,6 +37,7 @@ patterns_to_skip = [
     '/var/.*',
     '/afs/csail.mit.edu/.*',
     '.*/\\..*',
+    '/afs/.*'
     ]
 
 environment_variables_to_skip = [
@@ -277,7 +278,9 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-returncode = subprocess.call(args)
+strace = subprocess.Popen(args)
+strace.communicate()
+returncode=strace.returncode
 
 if returncode == 0 and cache_dir:
     try:
