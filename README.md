@@ -6,7 +6,7 @@ Memoizes execution of build commands
     export BUILDCACHE_CACHEDIR=/path/to/buildcache
     buildcache vivado build.tcl
 
-Buildcache uses strace to see which files are read and written during the build step.
+Unlike ccache, which parses gcc command line flags, Buildcache uses strace to see which files are read and written during the build step.
 
 A build is identified by the SHA1 of the executable, its arguments,
 and filtered environment variables. After the build is run, buildcache

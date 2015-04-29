@@ -28,13 +28,16 @@ patterns_to_skip = [
     '/dev/.*',
     '/etc/.*',
     '/lib/.*',
+    '/lib64/.*',
     '/proc/.*',
     '/run/.*',
     '/sys/.*',
     '/tmp/.*',
     '/usr/.*',
     '/var/.*',
+    '/afs/csail.mit.edu/.*',
     '.*/\\..*',
+    '/afs/.*'
     ]
 
 environment_variables_to_skip = [
@@ -70,7 +73,8 @@ fdFlags = {}
 ## python 2.6 does not have subprocess.check_output
 def check_output(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    return p.stdout.read()
+    (stdoutdata, stderrdata) = p.communicate()
+    return stdoutdata
 
 def scanStraceFiles(tmpdir):
     for stracefile in glob.glob('%s/*' % tmpdir):
@@ -274,12 +278,9 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-print "DD:", args
-p = subprocess.Popen(args)
-result = p.communicate()[0]
-if debug:
-    print result
-returncode = p.returncode
+strace = subprocess.Popen(args)
+strace.communicate()
+returncode=strace.returncode
 
 if returncode == 0 and cache_dir:
     try:
