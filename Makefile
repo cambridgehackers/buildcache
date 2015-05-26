@@ -72,4 +72,7 @@ spkg:
 	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
 	sed -i s/precise/trusty/g debian/changelog
 	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	sed -i s/trusty/utopic/g debian/changelog
+	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	git checkout debian
 
