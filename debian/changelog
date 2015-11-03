@@ -1,3 +1,9 @@
+buildcache (15.11.1-1trusty1) trusty; urgency=medium
+
+  * 15.11.1: uses gevent.subprocess to avoid deadlock. kudos to hanw.
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 03 Nov 2015 11:49:52 -0500
+
 buildcache (15.04.1-1trusty1) trusty; urgency=medium
 
   * 15.04.1
