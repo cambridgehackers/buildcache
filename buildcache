@@ -4,7 +4,7 @@ import glob
 import os
 import re
 import shutil
-import subprocess
+import gevent.subprocess as subprocess
 import sys
 import traceback
 import json
