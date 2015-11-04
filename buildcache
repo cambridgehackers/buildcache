@@ -125,6 +125,8 @@ def writeContextFile(filename):
         env[k] = os.environ[k]
     context = {'argv': sys.argv,
                'env': env }
+    if verbose:
+        print 'context', context
     f = open(filename, 'w+')
     jsonstr = json.dumps(context)
     f.write(jsonstr)
