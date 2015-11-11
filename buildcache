@@ -132,7 +132,7 @@ def writeContextFile(filename):
     f.write(jsonstr)
     f.close()
     #m = hashlib.sha1(jsonstr)
-    m = hashlib.sha1(' '.join(sys.argv))
+    m = hashlib.sha1('PWD=%s %s' % (os.getcwd(), ' '.join(sys.argv)))
     return m.hexdigest()
 
 def updateFilesWrittenFile(cache_dir, filesWritten):
