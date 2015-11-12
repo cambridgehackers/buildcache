@@ -236,16 +236,16 @@ def update_md5sum(md5sum):
 
 def check_md5sum():
     if not cache_dir:
-        print 'no cache_dir'
+        if verbose: print 'no cache_dir'
         return 22
     if not os.path.exists(cache_dir):
-        print 'no cache entry', cache_dir
+        if verbose: print 'no cache entry', cache_dir
         return 23
     p = subprocess.Popen(['md5sum', '-c', os.path.join(cache_dir, 'buildcache.md5sum')], stdout=subprocess.PIPE)
     result = p.communicate()[0]
     if debug:
         print result
-    elif 1 or verbose:
+    elif verbose:
         for line in result.split('\n'):
             #print line
             if not line.endswith(' OK'):
@@ -274,14 +274,14 @@ sha1 = writeContextFile(context_file_name)
 cache_dir = buildcache_cachedir(sha1)
 
 if check_md5sum() == 0:
-    print '%s: using cached result' % sys.argv[0]
+    if verbose: print '%s: using cached result' % sys.argv[0]
     readFilesFromCache(cache_dir)
     sys.exit(0)
 
 strace = ['strace', '-e', 'open,write', '-o', '%s/strace' % tmpdir]
 if follow_fork:
     strace.append('-ff')
-    print 'buildcache using -ff', strace + sys.argv[1:]
+    #if verbose: print 'buildcache using -ff', strace + sys.argv[1:]
 if cache_dir:
     args = strace + sys.argv[1:]
 else:
@@ -311,7 +311,7 @@ if returncode == 0 and cache_dir:
             #     continue
             footprint.append(uf)
         md5sum = check_output(['md5sum'] + footprint)
-        if debug:
+        if verbose:
             print md5sum
         update_md5sum(md5sum)
         filtered_files_written = [context_file_name] + filesWritten
