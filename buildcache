@@ -307,8 +307,8 @@ if returncode == 0 and cache_dir:
         for uf in filterFiles(filesRead):
             if uf in filesWritten:
                 continue
-            if os.path.abspath(uf).startswith(output_dir):
-                continue
+            # if os.path.abspath(uf).startswith(output_dir):
+            #     continue
             footprint.append(uf)
         md5sum = check_output(['md5sum'] + footprint)
         if debug:
