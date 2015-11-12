@@ -195,9 +195,11 @@ def readFilesFromCache(cache_dir):
             print 'Restoring cname %s to %s' % (cname, f)
             print traceback.format_exc()
         
-def uniqFiles(files):
+def filterFiles(files):
     uniqfiles = []
     for f in files:
+        if not os.path.exists(f) or not os.path.isfile(f):
+            continue
         skip = False
         for re in re_to_skip:
             m = re.match(f)
@@ -294,28 +296,25 @@ if returncode == 0 and cache_dir:
         output_dir = os.path.abspath(buildcache_outputdir())
         if debug:
             print 'footprint: ================================================================'
-            for f in uniqFiles(filesRead):
+            for f in filterFiles(filesRead):
                 print f
         if verbose:
             print 'files to cache: ==========================================================='
-            for f in uniqFiles(filesWritten):
+            for f in filterFiles(filesWritten):
                 print f
             print '==========================================================================='
         footprint = [context_file_name]
-        for uf in uniqFiles(filesRead):
+        for uf in filterFiles(filesRead):
             if uf in filesWritten:
                 continue
             if os.path.abspath(uf).startswith(output_dir):
-                continue
-            if not os.path.isfile(uf):
-                #vivado seems to open directories
                 continue
             footprint.append(uf)
         md5sum = check_output(['md5sum'] + footprint)
         if debug:
             print md5sum
         update_md5sum(md5sum)
-        filtered_files_written = [context_file_name] + [f for f in filesWritten if os.path.exists(f) and (not len([p for p in re_to_skip if p.match(f)]))]
+        filtered_files_written = [context_file_name] + filesWritten
         updateFilesWrittenFile(cache_dir, filtered_files_written)
         writeFilesToCache(cache_dir, filtered_files_written)
         check_md5sum()
