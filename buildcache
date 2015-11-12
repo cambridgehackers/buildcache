@@ -4,7 +4,10 @@ import glob
 import os
 import re
 import shutil
-import gevent.subprocess as subprocess
+try:
+    import gevent.subprocess as subprocess
+except:
+    import subprocess
 import sys
 import traceback
 import json
