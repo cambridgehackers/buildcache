@@ -23,6 +23,7 @@ if 'BUILDCACHE_FOLLOW_FORK' in os.environ and os.environ['BUILDCACHE_FOLLOW_FORK
 readonly_re = re.compile('.*O_RDONLY.*')
 open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
 write_re = re.compile('write.(\d+).*')
+mmap_re = re.compile('mmap.([0x0-9a-zA-z]+), (\d+), ([A-Z_|]+), ([A-Z_|]+), (-?\d+), ([0x0-9a-zA-z]+).*')
 
 patterns_to_skip = [
     '/dev/.*',
