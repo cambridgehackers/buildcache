@@ -314,7 +314,7 @@ if returncode == 0 and cache_dir:
         if verbose:
             print md5sum
         update_md5sum(md5sum)
-        filtered_files_written = [context_file_name] + filesWritten
+        filtered_files_written = [context_file_name] + [f for f in filesWritten]
         updateFilesWrittenFile(cache_dir, filtered_files_written)
         writeFilesToCache(cache_dir, filtered_files_written)
         check_md5sum()
