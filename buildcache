@@ -144,8 +144,9 @@ def writeContextFile():
     f.write(jsonstr)
     f.write('\n')
     f.close()
-    print 'SHA1(PWD=%s %s)' % (os.getcwd(), ' '.join(sys.argv))
-    print '    %s' % sha1
+    if verbose:
+        print 'SHA1(PWD=%s %s)' % (os.getcwd(), ' '.join(sys.argv))
+        print '    %s' % sha1
     return filename, cache_dir
 
 def updateFilesWrittenFile(cache_dir, filesWritten):
