@@ -119,7 +119,13 @@ def scanStraceFiles(tmpdir):
                 #print 'no matching re: ', line[0:-1]
                 pass
 
-def writeContextFile(filename):
+def writeContextFile():
+    m = hashlib.sha1('PWD=%s %s' % (os.getcwd(), ' '.join(sys.argv)))
+    sha1 = m.hexdigest()
+
+    cache_dir = buildcache_cachedir(sha1)
+
+    filename = os.path.join(cache_dir, 'buildcache.context.json')
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     env = {}
@@ -131,13 +137,16 @@ def writeContextFile(filename):
                'env': env }
     if verbose:
         print 'context', context
+    if os.path.isfile(filename):
+        os.rename(filename, filename + '.old')
     f = open(filename, 'w+')
-    jsonstr = json.dumps(context)
+    jsonstr = json.dumps(context, sort_keys=True, indent=4, separators=(',', ': '))
     f.write(jsonstr)
+    f.write('\n')
     f.close()
-    #m = hashlib.sha1(jsonstr)
-    m = hashlib.sha1('PWD=%s %s' % (os.getcwd(), ' '.join(sys.argv)))
-    return m.hexdigest()
+    print 'SHA1(PWD=%s %s)' % (os.getcwd(), ' '.join(sys.argv))
+    print '    %s' % sha1
+    return filename, cache_dir
 
 def updateFilesWrittenFile(cache_dir, filesWritten):
     filename = os.path.join(cache_dir, 'buildcache.fileswritten.json')
@@ -254,6 +263,9 @@ def check_md5sum():
             if not line.endswith(' OK'):
                 #print line.replace('FAILED', 'was changed')
                 sys.stderr.write("%s\n" % line.replace('FAILED', 'was changed'))
+    if p.returncode != 0:
+        if os.path.isfile(context_file_name + '.old'):
+            sys.stderr.write('%s\n' % check_output(['diff', '-u', context_file_name, (context_file_name + '.old')]))
     return p.returncode
     
 
@@ -272,10 +284,8 @@ patterns_to_skip.append(os.path.join(processpath, '.*'))
 re_to_skip = [re.compile(pattern) for pattern in patterns_to_skip]
 
 output_dir = buildcache_outputdir()
-context_file_name = os.path.join(output_dir, 'buildcache.context.json')
 
-sha1 = writeContextFile(context_file_name)
-cache_dir = buildcache_cachedir(sha1)
+(context_file_name, cache_dir) = writeContextFile()
 
 if check_md5sum() == 0:
     if verbose: print '%s: using cached result' % sys.argv[0]
