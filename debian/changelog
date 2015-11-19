@@ -1,3 +1,9 @@
+buildcache (15.11.2-1trusty1) trusty; urgency=medium
+
+  * 15.11.2: Fixed problem that was filtering .bo files from bsc footprint
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Thu, 19 Nov 2015 16:06:45 -0500
+
 buildcache (15.11.1-1trusty1) trusty; urgency=medium
 
   * 15.11.1: uses gevent.subprocess to avoid deadlock. kudos to hanw.
