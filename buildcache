@@ -136,7 +136,7 @@ def writeContextFile():
         env[k] = os.environ[k]
     context = {'argv': sys.argv,
                'env': env }
-    if verbose:
+    if debug:
         print 'context', context
     if os.path.isfile(filename):
         os.rename(filename, filename + '.old')
@@ -145,7 +145,7 @@ def writeContextFile():
     f.write(jsonstr)
     f.write('\n')
     f.close()
-    if verbose:
+    if debug:
         print 'SHA1(PWD=%s %s)' % (os.getcwd(), ' '.join(sys.argv))
         print '    %s' % sha1
     return filename, cache_dir
@@ -179,7 +179,7 @@ def writeFilesToCache(cache_dir, filesWritten):
             continue
         relname = os.path.relpath(f, cwd)
         cname = os.path.join(cache_dir, relname)
-        if verbose:
+        if debug:
             print 'caching', f
             print '     to', cname 
         cdir = os.path.dirname(cname)
@@ -197,7 +197,7 @@ def readFilesFromCache(cache_dir):
         if not os.path.exists(cname):
             print 'cached file does not exist', cname
             continue
-        if verbose:
+        if debug:
             print 'restoring', f
         fdir = os.path.dirname(f)
         if not os.path.isdir(fdir):
@@ -259,7 +259,7 @@ def check_md5sum():
     result = p.communicate()[0]
     if debug:
         print result
-    elif True or verbose:
+    elif verbose:
         for line in result.split('\n'):
             #print line
             if not line.endswith(' OK'):
@@ -314,7 +314,7 @@ if returncode == 0 and cache_dir:
             print 'footprint: ================================================================'
             for f in filterFiles(filesRead):
                 print f
-        if verbose:
+        if debug:
             print 'files to cache: ==========================================================='
             for f in filterFiles(filesWritten):
                 print f
