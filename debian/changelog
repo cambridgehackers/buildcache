@@ -1,3 +1,9 @@
+buildcache (15.12.1-1trusty1) trusty; urgency=medium
+
+  * Adjusted debug/verbose message levels
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Fri, 04 Dec 2015 10:43:33 -0500
+
 buildcache (15.11.2-1trusty1) trusty; urgency=medium
 
   * 15.11.2: Fixed problem that was filtering .bo files from bsc footprint
