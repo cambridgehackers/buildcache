@@ -71,6 +71,7 @@ environment_variables_to_skip = [
     'SSH.*',
     'USER',
     'WINDOW',
+    'XAUTHORITY',
     'XDG*'
 ]
 
@@ -163,7 +164,8 @@ def updateFilesWrittenFile(cache_dir, filesWritten):
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     cwd = '/' #os.getcwd()
-    info = {'filesWritten': [f for f in filesWritten],
+    filesWrittenAndRemain = filter(os.path.exists, filesWritten)
+    info = {'filesWritten': [f for f in filesWrittenAndRemain],
             'cwd': cwd}
     f = open(filename, 'w+')
     f.write(json.dumps(info))
@@ -310,7 +312,7 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-strace = subprocess.Popen(args)
+strace = subprocess.Popen(args, bufsize=-1)
 strace.communicate()
 returncode=strace.returncode
 
