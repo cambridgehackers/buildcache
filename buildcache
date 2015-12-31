@@ -281,7 +281,7 @@ def check_md5sum():
     return p.returncode
     
 
-tmpdir = '/tmp/buildcache-%d' % os.getpid()
+tmpdir = '/tmp/buildcache-%d-%d' % (os.getuid(), os.getpid())
 if os.path.isdir(tmpdir):
     shutil.rmtree(tmpdir)
 os.makedirs(tmpdir)
