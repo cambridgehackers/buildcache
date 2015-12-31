@@ -49,20 +49,29 @@ environment_variables_to_skip = [
     '.*SESSION_COOKIE.*',
     'BUILDCACHE.*',
     'COLUMNS',
+    'COLORTERM',
     'OLDPWD',
     'DISPLAY',
+    'DBUS.*',
+    'GPG_AGENT_INFO',
+    'GNOME.*',
     'LM_LICENSE_FILE',
     'LOGNAME',
     'MAIL',
     'MAKELEVEL',
     'MFLAGS',
     'MAKEFLAGS',
+    'NXSESSIONID',
     'SHLVL',
     'TERM',
     'TERMCAP',
+    'TMUX.*',
+    'SESSION_MANAGER',
+    'SHADOW_XAUTHORITY',
     'SSH.*',
     'USER',
     'WINDOW',
+    'XAUTHORITY',
     'XDG*'
 ]
 
@@ -155,7 +164,8 @@ def updateFilesWrittenFile(cache_dir, filesWritten):
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     cwd = '/' #os.getcwd()
-    info = {'filesWritten': [f for f in filesWritten],
+    filesWrittenAndRemain = filter(os.path.exists, filesWritten)
+    info = {'filesWritten': [f for f in filesWrittenAndRemain],
             'cwd': cwd}
     f = open(filename, 'w+')
     f.write(json.dumps(info))
@@ -271,7 +281,7 @@ def check_md5sum():
     return p.returncode
     
 
-tmpdir = '/tmp/buildcache-%d' % os.getpid()
+tmpdir = '/tmp/buildcache-%d-%d' % (os.getuid(), os.getpid())
 if os.path.isdir(tmpdir):
     shutil.rmtree(tmpdir)
 os.makedirs(tmpdir)
@@ -302,7 +312,7 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-strace = subprocess.Popen(args)
+strace = subprocess.Popen(args, bufsize=-1)
 strace.communicate()
 returncode=strace.returncode
 
