@@ -55,7 +55,6 @@ environment_variables_to_skip = [
     'DBUS.*',
     'GPG_AGENT_INFO',
     'GNOME.*',
-    'LM_LICENSE_FILE',
     'LESSOPEN',
     'LESSCLOSE',
     'LS_COLORS',
@@ -76,7 +75,6 @@ environment_variables_to_skip = [
     'WINDOW',
     'XAUTHORITY',
     'XDG*',
-    'XILINXD_LICENSE_FILE',
 ]
 
 environment_re_to_skip = [re.compile(p) for p in environment_variables_to_skip]
