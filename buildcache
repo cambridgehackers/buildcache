@@ -337,7 +337,7 @@ if returncode == 0 and cache_dir:
             #     continue
             footprint.append(uf)
         md5sum = check_output(['md5sum'] + footprint)
-        if verbose:
+        if debug:
             print md5sum
         update_md5sum(md5sum)
         filtered_files_written = [context_file_name] + filterFiles(filesWritten)
