@@ -48,22 +48,33 @@ environment_variables_to_skip = [
     '.*EMACS.*',
     '.*SESSION_COOKIE.*',
     'BUILDCACHE.*',
+    'COLORTERM',
     'COLUMNS',
-    'OLDPWD',
+    'DBUS.*',
     'DISPLAY',
-    'LM_LICENSE_FILE',
+    'GNOME.*',
+    'GPG_AGENT_INFO',
+    'LESSCLOSE',
+    'LESSOPEN',
     'LOGNAME',
+    'LS_COLORS',
     'MAIL',
+    'MAKEFLAGS',
     'MAKELEVEL',
     'MFLAGS',
-    'MAKEFLAGS',
+    'NXSESSIONID',
+    'OLDPWD',
+    'SESSION_MANAGER',
+    'SHADOW_XAUTHORITY',
     'SHLVL',
+    'SSH.*',
     'TERM',
     'TERMCAP',
-    'SSH.*',
+    'TMUX.*',
     'USER',
     'WINDOW',
-    'XDG*'
+    'XAUTHORITY',
+    'XDG*',
 ]
 
 environment_re_to_skip = [re.compile(p) for p in environment_variables_to_skip]
@@ -136,7 +147,7 @@ def writeContextFile():
         env[k] = os.environ[k]
     context = {'argv': sys.argv,
                'env': env }
-    if verbose:
+    if debug:
         print 'context', context
     if os.path.isfile(filename):
         os.rename(filename, filename + '.old')
@@ -145,7 +156,7 @@ def writeContextFile():
     f.write(jsonstr)
     f.write('\n')
     f.close()
-    if verbose:
+    if debug:
         print 'SHA1(PWD=%s %s)' % (os.getcwd(), ' '.join(sys.argv))
         print '    %s' % sha1
     return filename, cache_dir
@@ -155,7 +166,8 @@ def updateFilesWrittenFile(cache_dir, filesWritten):
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     cwd = '/' #os.getcwd()
-    info = {'filesWritten': [f for f in filesWritten],
+    filesWrittenAndRemain = filter(os.path.exists, filesWritten)
+    info = {'filesWritten': [f for f in filesWrittenAndRemain],
             'cwd': cwd}
     f = open(filename, 'w+')
     f.write(json.dumps(info))
@@ -179,7 +191,7 @@ def writeFilesToCache(cache_dir, filesWritten):
             continue
         relname = os.path.relpath(f, cwd)
         cname = os.path.join(cache_dir, relname)
-        if verbose:
+        if debug:
             print 'caching', f
             print '     to', cname 
         cdir = os.path.dirname(cname)
@@ -197,7 +209,7 @@ def readFilesFromCache(cache_dir):
         if not os.path.exists(cname):
             print 'cached file does not exist', cname
             continue
-        if verbose:
+        if debug:
             print 'restoring', f
         fdir = os.path.dirname(f)
         if not os.path.isdir(fdir):
@@ -259,7 +271,7 @@ def check_md5sum():
     result = p.communicate()[0]
     if debug:
         print result
-    elif True or verbose:
+    elif verbose:
         for line in result.split('\n'):
             #print line
             if not line.endswith(' OK'):
@@ -271,7 +283,7 @@ def check_md5sum():
     return p.returncode
     
 
-tmpdir = '/tmp/buildcache-%d' % os.getpid()
+tmpdir = '/tmp/buildcache-%d-%d' % (os.getuid(), os.getpid())
 if os.path.isdir(tmpdir):
     shutil.rmtree(tmpdir)
 os.makedirs(tmpdir)
@@ -302,7 +314,7 @@ if cache_dir:
     args = strace + sys.argv[1:]
 else:
     args = sys.argv[1:]
-strace = subprocess.Popen(args)
+strace = subprocess.Popen(args, bufsize=-1)
 strace.communicate()
 returncode=strace.returncode
 
@@ -314,7 +326,7 @@ if returncode == 0 and cache_dir:
             print 'footprint: ================================================================'
             for f in filterFiles(filesRead):
                 print f
-        if verbose:
+        if debug:
             print 'files to cache: ==========================================================='
             for f in filterFiles(filesWritten):
                 print f
@@ -327,10 +339,10 @@ if returncode == 0 and cache_dir:
             #     continue
             footprint.append(uf)
         md5sum = check_output(['md5sum'] + footprint)
-        if verbose:
+        if debug:
             print md5sum
         update_md5sum(md5sum)
-        filtered_files_written = [context_file_name] + [f for f in filesWritten]
+        filtered_files_written = [context_file_name] + filterFiles(filesWritten)
         updateFilesWrittenFile(cache_dir, filtered_files_written)
         writeFilesToCache(cache_dir, filtered_files_written)
         check_md5sum()

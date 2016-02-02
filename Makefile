@@ -62,6 +62,8 @@ install:
 	install -d -m755 $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
+VERSION=16.02.1
+
 dpkg:
 	sed -i s/trusty/precise/g debian/changelog
 	git buildpackage --git-ignore-new --git-upstream-branch=master -us -uc
