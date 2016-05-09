@@ -68,6 +68,7 @@ environment_variables_to_skip = [
     'SHADOW_XAUTHORITY',
     'SHLVL',
     'SSH.*',
+    'STY',
     'TERM',
     'TERMCAP',
     'TMUX.*',
