@@ -1,5 +1,11 @@
 buildcache (15.12.1-1trusty1) trusty; urgency=medium
 
+  * 16.05.1, build for xenial xerus
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 09 May 2016 13:55:31 -0400
+
+buildcache (15.12.1-1trusty1) trusty; urgency=medium
+
   * Adjusted debug/verbose message levels
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Fri, 04 Dec 2015 10:43:33 -0500
