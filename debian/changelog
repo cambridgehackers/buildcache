@@ -1,4 +1,4 @@
-buildcache (15.12.1-1trusty1) trusty; urgency=medium
+buildcache (16.05.1-1trusty1) trusty; urgency=medium
 
   * 16.05.1, build for xenial xerus
 
