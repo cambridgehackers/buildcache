@@ -59,6 +59,8 @@ environment_variables_to_skip = [
     'LOGNAME',
     'LS_COLORS',
     'MAIL',
+    'MAKE_TERMOUT',
+    'MAKE_TERMERR',
     'MAKEFLAGS',
     'MAKELEVEL',
     'MFLAGS',
