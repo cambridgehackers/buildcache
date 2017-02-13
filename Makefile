@@ -66,19 +66,17 @@ VERSION=17.02.1
 
 dpkg:
 	sed -i s/trusty/precise/g debian/changelog
-	git buildpackage --git-ignore-new --git-upstream-branch=master -us -uc
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -us -uc
 	sed -i s/trusty/precise/g debian/changelog
 
 spkg:
 	sed -i s/trusty/precise/g debian/changelog
-	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
-	sed -i s/precise/trusty/g debian/changelog
-	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
-	sed -i s/trusty/utopic/g debian/changelog
-	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	git checkout debian
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
 	git checkout debian
 	sed -i s/trusty/xenial/g debian/changelog
-	git buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
 	git checkout debian
 
 upload:
