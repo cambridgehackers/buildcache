@@ -82,8 +82,4 @@ spkg:
 upload:
 	git push origin v$(VERSION)
 	dput ppa:jamey-hicks/connectal ../buildcache_$(VERSION)-*_source.changes
-	(cd  ../obs/home:jameyhicks:connectaldeb/buildcache/; osc rm * || true)
-	cp -v ../buildcache_$(VERSION)*trusty*.diff.gz ../buildcache_$(VERSION)*trusty*.dsc ../buildcache_$(VERSION)*.orig.tar.gz ../obs/home:jameyhicks:connectaldeb/buildcache/
-	(cd ../obs/home:jameyhicks:connectaldeb/buildcache/; osc add *; osc commit -m $(VERSION) )
-	(cd ../obs/home:jameyhicks:connectal/buildcache; sed -i "s/>v.....</>v$(VERSION)</" _service; osc commit -m "v$(VERSION)" )
 
