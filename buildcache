@@ -309,10 +309,20 @@ if check_md5sum() == 0:
     readFilesFromCache(cache_dir)
     sys.exit(0)
 
+if sys.argv[1] == 'vivado':
+    lines = check_output(['vivado', '-version']).split('\n')
+    sys.stderr.write('\n'.join(lines))
+    m = re.match('Vivado v(\d+.\d+).*', lines[0])
+    if m:
+        vivado_version = m.group(1)
+        if vivado_version > '2016.2':
+            sys.stderr.write('Not caching due to vivado version %s\n' % vivado_version)
+            cache_dir = None
+
 strace = ['strace', '-e', 'open,write', '-o', '%s/strace' % tmpdir]
 if follow_fork:
     strace.append('-ff')
-    #if verbose: print 'buildcache using -ff', strace + sys.argv[1:]
+    if verbose: print 'buildcache using -ff', strace + sys.argv[1:]
 if cache_dir:
     args = strace + sys.argv[1:]
 else:
