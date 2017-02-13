@@ -1,3 +1,9 @@
+buildcache (17.02.1-1trusty1) trusty; urgency=medium
+
+  * Do not strace vivado 2016.3 or newer
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 13 Feb 2017 09:41:01 -0500
+
 buildcache (16.05.1-1trusty1) trusty; urgency=medium
 
   * 16.05.1, build for xenial xerus
