@@ -62,7 +62,7 @@ install:
 	install -d -m755 $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
-VERSION=17.02.1
+VERSION=18.05.1
 
 dpkg:
 	sed -i s/trusty/precise/g debian/changelog
@@ -71,12 +71,15 @@ dpkg:
 
 spkg:
 	sed -i s/trusty/precise/g debian/changelog
-	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
-	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 	sed -i s/trusty/xenial/g debian/changelog
-	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc '--git-upstream-tag=v%(version)s'
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
+	git checkout debian
+	sed -i s/trusty/bionic/g debian/changelog
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 
 upload:

@@ -312,7 +312,7 @@ if check_md5sum() == 0:
 if sys.argv[1] == 'vivado':
     lines = check_output(['vivado', '-version']).split('\n')
     sys.stderr.write('\n'.join(lines))
-    m = re.match('Vivado v(\d+.\d+).*', lines[0])
+    m = re.match('.*Vivado v(\d+.\d+).*', ''.join(lines))
     if m:
         vivado_version = m.group(1)
         if vivado_version > '2016.2':
