@@ -70,15 +70,15 @@ dpkg:
 	sed -i s/trusty/precise/g debian/changelog
 
 spkg:
-	sed -i s/trusty/precise/g debian/changelog
+	sed -i s/precise/trusty/g debian/changelog
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
-	sed -i s/trusty/xenial/g debian/changelog
+	sed -i s/precise/xenial/g debian/changelog
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
-	sed -i s/trusty/bionic/g debian/changelog
+	sed -i s/precise/bionic/g debian/changelog
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 
