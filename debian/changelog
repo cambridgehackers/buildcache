@@ -1,3 +1,9 @@
+buildcache (18.08.1-1precise1) precise; urgency=medium
+
+  * Package for bionic 18.04
+
+ -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 28 Aug 2018 11:23:42 -0400
+
 buildcache (18.05.1-1precise1) precise; urgency=medium
 
    * Detect SDx vivado version
