@@ -25,6 +25,7 @@ if 'BUILDCACHE_FOLLOW_FORK' in os.environ and os.environ['BUILDCACHE_FOLLOW_FORK
 
 readonly_re = re.compile('.*O_RDONLY.*')
 open_re = re.compile('open."([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
+openat_re = re.compile('openat.AT_FDCWD, "([^"]+)", ([A-Za-z_\|]+)(, \d+)?. += (\d+).*')
 write_re = re.compile('write.(\d+).*')
 mmap_re = re.compile('mmap.([0x0-9a-zA-z]+), (\d+), ([A-Z_|]+), ([A-Z_|]+), (-?\d+), ([0x0-9a-zA-z]+).*')
 
@@ -99,15 +100,22 @@ def scanStraceFiles(tmpdir):
     for stracefile in glob.glob('%s/*' % tmpdir):
         for line in open(stracefile, 'r'):
             m = open_re.match(line)
+            openat_m = openat_re.match(line)
             wm = write_re.match(line)
-            if m:
+
+            if 'open' in line and not openat_m and not 'openat' in line:
+                print('stracefile open (%s)' % (line))
+
+            if m or openat_m:
+                if openat_m:
+                    m = openat_m
                 fname = os.path.abspath(m.group(1))
                 flags =  m.group(2)
 
                 fd = m.group(m.lastindex)
                 fdFile[fd] = fname
                 fdFlags[fd] = flags
-                #print fd, fname, flags
+                # print fd, fname, flags
 
                 if readonly_re.match(flags):
                     if fname in filesRead:
@@ -319,7 +327,7 @@ if sys.argv[1] == 'vivado':
             sys.stderr.write('Not caching due to vivado version %s\n' % vivado_version)
             cache_dir = None
 
-strace = ['strace', '-e', 'open,write', '-o', '%s/strace' % tmpdir]
+strace = ['strace', '-e', 'open,openat,write', '-o', '%s/strace' % tmpdir]
 if follow_fork:
     strace.append('-ff')
     if verbose: print 'buildcache using -ff', strace + sys.argv[1:]
