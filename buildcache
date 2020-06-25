@@ -103,7 +103,7 @@ def scanStraceFiles(tmpdir):
             openat_m = openat_re.match(line)
             wm = write_re.match(line)
 
-            if 'open' in line and not openat_m and not 'openat' in line:
+            if line.startswith('open') and not m and not openat_m and not 'openat' in line:
                 print('stracefile open (%s)' % (line))
 
             if m or openat_m:
