@@ -62,7 +62,7 @@ install:
 	install -d -m755 $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
-VERSION=18.05.1
+VERSION=22.05.23
 
 dpkg:
 	git buildpackage --git-ignore-new --git-upstream-branch=master --git-debian-branch=ubuntu/trusty -tc
