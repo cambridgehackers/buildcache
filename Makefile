@@ -62,7 +62,7 @@ install:
 	install -d -m755 $(DESTDIR)/usr/share/buildcache
 	install -m755 buildcache $(DESTDIR)/usr/share/buildcache/buildcache
 
-VERSION=18.08.1
+VERSION=22.05.23
 
 dpkg:
 	sed -i s/trusty/precise/g debian/changelog
@@ -79,6 +79,9 @@ spkg:
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 	sed -i s/precise/bionic/g debian/changelog
+	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
+	git checkout debian
+	sed -i s/precise/jammy/g debian/changelog
 	gbp buildpackage --git-ignore-new --git-upstream-branch=master -S -tc -pgpg2 '--git-upstream-tag=v%(version)s'
 	git checkout debian
 

@@ -1,102 +1,108 @@
-buildcache (18.08.1-1precise1) precise; urgency=medium
+buildcache (22.05.23-1trusty1) trusty; urgency=medium
+
+  * Build for jammy jellyfish
+
+ --  <jamey.hicks@gmail.com>  Mon, 23 May 2022 11:10:53 -0400
+
+buildcache (18.08.1-1trusty1) trusty; urgency=medium
 
   * Package for bionic 18.04
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 28 Aug 2018 11:23:42 -0400
 
-buildcache (18.05.1-1precise1) precise; urgency=medium
+buildcache (18.05.1-1trusty1) trusty; urgency=medium
 
    * Detect SDx vivado version
    * Version 18.05.1
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 29 May 2018 12:34:43 -0400
 
-buildcache (17.02.1-1precise1) precise; urgency=medium
+buildcache (17.02.1-1trusty1) trusty; urgency=medium
 
   * Do not strace vivado 2016.3 or newer
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 13 Feb 2017 09:41:01 -0500
 
-buildcache (16.05.1-1precise1) precise; urgency=medium
+buildcache (16.05.1-1trusty1) trusty; urgency=medium
 
   * 16.05.1, build for xenial xerus
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 09 May 2016 13:55:31 -0400
 
-buildcache (15.12.1-1precise1) precise; urgency=medium
+buildcache (15.12.1-1trusty1) trusty; urgency=medium
 
   * Adjusted debug/verbose message levels
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Fri, 04 Dec 2015 10:43:33 -0500
 
-buildcache (15.11.2-1precise1) precise; urgency=medium
+buildcache (15.11.2-1trusty1) trusty; urgency=medium
 
   * 15.11.2: Fixed problem that was filtering .bo files from bsc footprint
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Thu, 19 Nov 2015 16:06:45 -0500
 
-buildcache (15.11.1-1precise1) precise; urgency=medium
+buildcache (15.11.1-1trusty1) trusty; urgency=medium
 
   * 15.11.1: uses gevent.subprocess to avoid deadlock. kudos to hanw.
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 03 Nov 2015 11:49:52 -0500
 
-buildcache (15.04.1-1precise1) precise; urgency=medium
+buildcache (15.04.1-1trusty1) trusty; urgency=medium
 
   * 15.04.1
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 07 Apr 2015 08:02:24 -0400
 
-buildcache (15.03.1-1precise1) precise; urgency=medium
+buildcache (15.03.1-1trusty1) trusty; urgency=medium
 
   * 15.03.1
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Mon, 30 Mar 2015 13:55:15 -0400
 
-buildcache (14.11.1-2precise2) precise; urgency=low
+buildcache (14.11.1-2trusty2) trusty; urgency=low
 
   * Fixed make install
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 12:18:12 -0500
 
-buildcache (14.11.1-1precise1) precise; urgency=low
+buildcache (14.11.1-1trusty1) trusty; urgency=low
 
   * Updated to 14.11.1.
   * Shows what files were changed that caused cache to be invalid
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 18 Nov 2014 08:48:42 -0500
 
-buildcache (14.10.2-1precise1) precise; urgency=low
+buildcache (14.10.2-1trusty1) trusty; urgency=low
 
   * bump version
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 16:18:49 -0400
 
-buildcache (14.10.1-5precise1) precise; urgency=low
+buildcache (14.10.1-5trusty1) trusty; urgency=low
 
   * Depends on strace both at build/test and at run time.
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:48:04 -0400
 
-buildcache (14.10.1-4precise1) precise; urgency=low
+buildcache (14.10.1-4trusty1) trusty; urgency=low
 
   * Also needs coreutils at build time
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 15:11:42 -0400
 
-buildcache (14.10.1-3precise1) precise; urgency=low
+buildcache (14.10.1-3trusty1) trusty; urgency=low
 
   * Needs python at build time
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:59:50 -0400
 
-buildcache (14.10.1-2precise1) precise; urgency=low
+buildcache (14.10.1-2trusty1) trusty; urgency=low
 
   * use /etc/os-release instead of /etc/motd
 
  -- Jamey Hicks <jamey.hicks@gmail.com>  Tue, 21 Oct 2014 14:51:53 -0400
 
-buildcache (14.10.1-1precise1) precise; urgency=low
+buildcache (14.10.1-1trusty1) trusty; urgency=low
 
   * Initial release
 
