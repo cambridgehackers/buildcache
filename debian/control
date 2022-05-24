@@ -2,14 +2,14 @@ Source: buildcache
 Section: devel
 Priority: extra
 Maintainer: Jamey Hicks <jamey.hicks@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), python (>= 2.7), coreutils
+Build-Depends: debhelper (>= 8.0.0), python3 (>= 3.6), coreutils
 Standards-Version: 3.9.2
 Homepage: https://github.com/cambridgehackers/buildcache
 Vcs-Git: git://github.com/cambridgehackers/buildcache.git
 
 Package: buildcache
 Architecture: all
-Depends: python (>= 2.7), strace, python-gevent
+Depends: python3 (>= 3.6), strace, python3-gevent
 Description: Memoizes execution of build commands.
  Buildcache uses strace to see which files are read and written
  during the build step.
